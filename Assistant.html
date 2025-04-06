@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saeed's Assistant - Your Voice Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            color: #ffffff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease, pulse 2s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.06);
+            }
+        }
+
+        #jarvis-listen-button {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            padding: 18px 35px;
+            font-size: 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(100, 100, 255, 0.4);
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #jarvis-listen-button:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #a777e3, #6e8efb);
+        }
+
+        #jarvis-listen-button img {
+            margin-right: 10px;
+            height: 30px;
+        }
+
+        #jarvis-listening {
+            margin-top: 20px;
+            color: #00e676;
+            font-weight: bold;
+            font-style: italic;
+            display: none;
+            font-size: 1.2rem;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        #jarvis-response,
+        #jarvis-error {
+            margin-top: 35px;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: left;
+            white-space: pre-line;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, border-left 0.3s ease;
+        }
+
+        #jarvis-response {
+            background: rgba(50, 205, 50, 0.1);
+            border-left: 5px solid #32cd32;
+        }
+
+        #jarvis-response:hover {
+            background-color: rgba(50, 205, 50, 0.2);
+        }
+
+        #jarvis-response strong {
+            font-weight: bold;
+            color: #32cd32;
+        }
+
+        #jarvis-error {
+            background: rgba(220, 20, 60, 0.1);
+            color: #dc143c;
+            border-left: 5px solid #dc143c;
+        }
+
+        #jarvis-error:hover {
+            background-color: rgba(220, 20, 60, 0.2);
+        }
+
+        a {
+            color: #00bfff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 600;
+        }
+
+        a:hover {
+            color: #00ffff;
+        }
+
+        #input-container {
+            display: flex;
+            align-items: center;
+            margin-top: 25px;
+            width: 100%;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px 0 0 10px;
+            background: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #user-input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #submit-button {
+            background: linear-gradient(135deg, #48319d, #6441a5);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        #submit-button:hover {
+            background: linear-gradient(135deg, #6441a5, #48319d);
+            transform: scale(1.05);
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+        }
+
+        #submit-button:active {
+            transform: scale(1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><img src="https://i.ibb.co/YyzzFVT/robot-face-cartoon.png" alt="Saeed's Assistant Logo"
+                style="margin-right: 15px; height: 40px; vertical-align: middle;"> Saeed's Assistant</h1>
+        <button id="jarvis-listen-button">
+            <img src="https://i.ibb.co/jZg9z6Y/microphone-cartoon.png" alt="Microphone Icon" /> Start Listening
+        </button>
+        <p id="jarvis-listening">🔊 Listening...</p>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type your command here..." />
+            <button id="submit-button">Send</button>
+        </div>
+        <div id="jarvis-response"></div>
+        <div id="jarvis-error"></div>
+    </div>
+    <script>
+        const myName = "Saeed Ullah";
+        const assistantName = "Saeed's Assistant";
+        const responseEl = document.getElementById("jarvis-response");
+        const errorEl = document.getElementById("jarvis-error");
+        const listeningEl = document.getElementById("jarvis-listening");
+        const button = document.getElementById("jarvis-listen-button");
+        const userInput = document.getElementById("user-input");
+        const submitButton = document.getElementById("submit-button");
+
+        const websiteMap = {
+            "google": "https://www.google.com",
+            "youtube": "https://www.youtube.com",
+            "facebook": "https://www.facebook.com",
+            "twitter": "https://twitter.com",
+            "gmail": "https://mail.google.com",
+            "github": "https://github.com",
+            "stackoverflow": "https://stackoverflow.com",
+            "linkedin": "https://www.linkedin.com",
+            "instagram": "https://www.instagram.com",
+            "amazon": "https://www.amazon.com",
+            "wikipedia": "https://www.wikipedia.org",
+            "reddit": "https://www.reddit.com",
+            "netflix": "https://www.netflix.com",
+            "yahoo": "https://www.yahoo.com",
+            "bing": "https://www.bing.com",
+            "whatsapp web": "https://web.whatsapp.com/",
+            "zoom": "https://zoom.us/",
+            "canva": "https://www.canva.com/",
+            "spotify": "https://www.spotify.com/",
+            "twitch": "https://www.twitch.tv/",
+            "ebay": "https://www.ebay.com/",
+            "paypal": "https://www.paypal.com/",
+            "speedtest": "https://www.speedtest.net/",
+            "pinterest": "https://www.pinterest.com/",
+            "medium": "https://medium.com/",
+            "dribbble": "https://dribbble.com/",
+            "behance": "https://www.behance.net/",
+            "wordpress": "https://wordpress.com/",
+            "shopify": "https://www.shopify.com/",
+            "slack": "https://slack.com/",
+            "trello": "https://trello.com/",
+            "asana": "https://asana.com/",
+            "jira": "https://www.atlassian.com/software/jira",
+            "confluence": "https://www.atlassian.com/software/confluence",
+            "dropbox": "https://www.dropbox.com/",
+            "onedrive": "https://onedrive.live.com/",
+            "google drive": "https://drive.google.com/",
+            "figma": "https://www.figma.com/",
+            "adobexd": "https://www.adobe.com/products/xd.html",
+            "skype": "https://www.skype.com/",
+            "discord": "https://discord.com/",
+        };
+
+        const appMap = {
+            "notepad": "notepad.exe",
+            "calculator": "calc.exe",
+            "paint": "mspaint.exe",
+            "chrome": "chrome.exe",
+            "edge": "microsoft-edge:",
+            "firefox": "firefox.exe",
+            "whatsapp": "whatsapp.exe",
+            "task manager": "taskmgr.exe",
+            "command prompt": "cmd.exe",
+            "powershell": "powershell.exe",
+            "file explorer": "explorer.exe",
+            "regedit": "regedit.exe",
+            "msconfig": "msconfig.exe",
+            "services": "services.msc",
+            "event viewer": "eventvwr.msc",
+            "word": "winword.exe",
+            "excel": "excel.exe",
+            "powerpoint": "powerpnt.exe",
+            "access": "msaccess.exe",
+            "outlook": "outlook.exe",
+            "snipping tool": "snippingtool.exe",
+            "sticky notes": "stikynot.exe",
+            "character map": "charmap.exe",
+            "disk management": "diskmgmt.msc",
+            "device manager": "devmgmt.msc",
+            "resource monitor": "resmon.exe",
+            "system information": "msinfo32.exe",
+            "ms paint": "mspaint.exe",
+            "wordpad": "wordpad.exe",
+            "mspub": "mspub.exe",
+            "winver": "winver.exe",
+            "dxdiag": "dxdiag.exe",
+            "perfmon": "perfmon.exe",
+            "rsop": "rsop.msc",
+            "secpol": "secpol.msc",
+            "gpedit": "gpedit.msc",
+            "compmgmt": "compmgmt.msc",
+            "odbcad32": "odbcad32.exe",
+            "ncpa": "ncpa.cpl",
+            "appwiz": "appwiz.cpl",
+            "intl": "intl.cpl",
+            "firewall": "firewall.cpl",
+            "hdwwiz": "hdwwiz.cpl",
+            "mrt": "mrt.exe",
+            "cleanmgr": "cleanmgr.exe",
+            "defrag": "dfrgui.exe",
+            "презентация": "powerpnt.exe",
+            "блокнот": "notepad.exe",
+            "калкулатор": "calc.exe",
+            "боядисване": "mspaint.exe",
+            "хром": "chrome.exe",
+            "ръб": "microsoft-edge:",
+            "огнена лисица": "firefox.exe",
+            "whatsap": "whatsapp.exe",
+            "мениджър на задачите": "taskmgr.exe",
+            "команден ред": "cmd.exe",
+            "powershell": "powershell.exe",
+            "файлов мениджър": "explorer.exe",
+            "regedit": "regedit.exe",
+            "msconfig": "msconfig.exe",
+            "услуги": "services.msc",
+            "преглед на събития": "eventvwr.msc",
+            "слово": "winword.exe",
+            "отличен": "excel.exe",
+            "мощностна точка": "powerpnt.exe",
+            "достъп": "msaccess.exe",
+            "изгледи": "outlook.exe",
+            "инструмент за изрязване": "snippingtool.exe",
+            "лепкави бележки": "stikynot.exe",
+            "карта на знаците": "charmap.exe",
+            "управление на дискове": "diskmgmt.msc",
+            "мениджър на устройства": "devmgmt.msc",
+            "монитор на ресурси": "resmon.exe",
+            "системна информация": "msinfo32.exe",
+            "ms paint": "mspaint.exe",
+            "wordpad": "wordpad.exe",
+            "mspub": "mspub.exe",
+            "winver": "winver.exe",
+            "dxdiag": "dxdiag.exe",
+            "perfmon": "perfmon.exe",
+            "rsop": "rsop.msc",
+            "secpol": "secpol.msc",
+            "gpedit": "gpedit.msc",
+            "compmgmt": "compmgmt.msc",
+            "odbcad32": "odbcad32.exe",
+            "ncpa": "ncpa.cpl",
+            "appwiz": "appwiz.cpl",
+            "intl": "intl.cpl",
+            "firewall": "firewall.cpl",
+            "hdwwiz": "hdwwiz.cpl",
+            "mrt": "mrt.exe",
+            "cleanmgr": "cleanmgr.exe",
+            "defrag": "dfrgui.exe",
+        };
+
+        const generalResponseMap = {
+            "what is java": "Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible.",
+            "what is science": "Science is a systematic and organized approach to discovering and understanding the natural world through observation, experimentation, and theoretical explanations.",
+            "what is html": "HTML (HyperText Markup Language) is the standard markup language for creating web pages. It provides the structure of a website.",
+            "what is css": "CSS (Cascading Style Sheets) is a style sheet language used for describing the presentation of a document written in a markup language like HTML.  It controls the look and formatting of a web page.",
+            "what is javascript": "JavaScript is a high-level, often just-in-time compiled, multi-paradigm programming language that conforms to the ECMAScript specification.  It enables interactive web pages.",
+            "what is python": "Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation.",
+            "what is a computer": "A computer is a machine or device that performs processes, calculations, and operations based on instructions provided by a software or hardware program.  It has the ability to accept data (input), process it, and then produce outputs.",
+        };
+
+        let recognition;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+        } else {
+            displayError("Speech Recognition not supported. Please use a compatible browser.");
+        }
+
+        let speech = new SpeechSynthesisUtterance();
+        speech.lang = 'en-US';
+        //  Set to a female voice.  This is browser-dependent, so we'll try a few common ones.
+        speech.voice = speechSynthesis.getVoices().find(v => v.name.includes('Female')) ||
+            speechSynthesis.getVoices().find(v => v.name.includes('female')) ||
+            speechSynthesis.getVoices().find(v => v.name.includes('Amy')); // A common default
+
+        let isMuted = false; // Add a mute state
+
+        function speak(text) {
+            if (!isMuted) { // Check if muted
+                speech.text = text;
+                window.speechSynthesis.speak(speech);
+            }
+        }
+
+        function displayResponse(text) {
+            responseEl.innerHTML = `<strong>${assistantName}:</strong> ${text}`;
+            speak(text);
+        }
+
+        function displayError(msg) {
+            errorEl.textContent = msg;
+        }
+
+        function setListening(state) {
+            listeningEl.style.display = state ? 'block' : 'none';
+            button.textContent = state ? '🔊 Listening...' : '🎙 Start Listening';
+            button.disabled = state;
+        }
+
+        function getRandom(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function handleOpenCommand(query) {
+            if (query) {
+                query = query.trim();
+                if (appMap.hasOwnProperty(query)) {
+                    displayResponse(`Attempting to open ${query} from your system.`);
+                    // Use a more robust method to try opening local applications.
+                    //  This might involve a backend server or a custom protocol handler.
+                    //  For security reasons, direct client-side JavaScript opening of executables is very limited.
+                    window.location.href = `app://${appMap[query]}`; //  This is a placeholder and might not work directly.
+
+                } else if (websiteMap.hasOwnProperty(query)) {
+                    displayResponse(`Opening ${query}.`);
+                    window.open(websiteMap[query], "_blank");
+                } else if (query === "gemini") {
+                    displayResponse("Opening Google Gemini for you.");
+                    window.open("https://gemini.google.com", "_blank");
+                    //  Here, you would also use a server-side script or API
+                    //  to send the code to Google Gemini.  This is just a placeholder.
+                    //  You can't directly send code from client-side JavaScript.
+                    //  A possible approach:
+                    //  1.  Send an AJAX request to your server with the code.
+                    //  2.  Your server-side script would then use a Gemini API
+                    //      (if available) to submit the code.
+                    //  3.  Gemini would execute the code.
+                    //  4.  The result would be sent back to your server.
+                    //  5.  Your server would send the result back to the client.
+                    //
+                    //  For security and practicality, this *must* involve a server.
+
+                    //  Important:  Replace this placeholder with actual server-side communication.
+                    //  Example (Conceptual - Requires a server):
+                    /*
+                    fetch('/execute-gemini', {  //  Replace '/execute-gemini' with your server endpoint
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ code: "your code here" }) //  Replace "your code here"
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            displayError("Gemini Error: " + data.error);
+                        } else {
+                            displayResponse("Gemini Result: " + data.result); //  Handle the result
+                        }
+                    })
+                    .catch(error => {
+                        displayError("Error communicating with server: " + error);
+                    });
+                    */
+
+                } else {
+                    displayResponse(`Searching online for "${query}".`);
+                    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+                }
+            } else {
+                displayResponse("Sorry, please specify what you want to open.");
+            }
+        }
+
+
+
+        function displayTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+            displayResponse(`The time is ${timeString}.`);
+        }
+
+        function displayDate() {
+            const now = new Date();
+            const dateString = now.toLocaleDateString([], {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            displayResponse(`Today's date is ${dateString}.`);
+        }
+
+        function handleSearchCommand(query) {
+            if (query) {
+                if (appMap.hasOwnProperty(query)) {
+                    displayResponse(`Attempting to open ${query} from your system.`);
+                    window.location.href = `app://${appMap[query]}`; //  This is a placeholder.
+
+                } else {
+                    displayResponse(`Searching online for "${query}".`);
+                    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+                }
+
+            } else {
+                displayResponse("What do you want me to search for?");
+            }
+        }
+
+        function processCommand(command) {
+            command = command.toLowerCase();
+
+            if (command.includes("hi saeed ullah kese ho")) {
+                displayResponse("Hi Saeed Ullah, kese ho");
+            } else if (command.includes("hello jarvis") || command.includes("hey jarvis")) {
+                displayResponse(`Hi ${myName}, kese ho I am your assistant. How can I help you?`);
+            } else if (command.includes("jarvis")) {
+                displayResponse(`Hi ${myName}`);
+            } else if (command.startsWith("open")) {
+                handleOpenCommand(command.substring(4).trim());
+            } else if (command.includes("what is the time") || command.includes("tell me the time")) {
+                displayTime();
+            } else if (command.includes("what is today's date") || command.includes("tell me the date")) {
+                displayDate();
+            } else if (command.startsWith("search for") || command.startsWith("search")) {
+                const searchQuery = command.substring(command.indexOf("for") + 3).trim() || command.substring(6).trim();
+                handleSearchCommand(searchQuery);
+            } else if (command.startsWith("what is") || command.startsWith("who is")) {
+                const query = command.substring(command.indexOf("is") + 2).trim();
+                if (generalResponseMap.hasOwnProperty(query)) {
+                    displayResponse(generalResponseMap[query]);
+                } else {
+                    handleSearchCommand(command);
+                }
+            } else if (command.includes("teach me english")) {
+                const lessons = [
+                    "Word of the day: 'Benevolent' - meaning kind and generous.",
+                    "Phrase: 'Break the ice' - to start a conversation in a social setting.",
+                    "Tip: Try watching English shows with subtitles to learn faster.",
+                ];
+                displayResponse(getRandom(lessons));
+            } else if (command.includes("teach me to code")) {
+                const tips = [
+                    "Tip: In JavaScript, 'let' allows you to declare block-scoped variables.",
+                    "HTML stands for HyperText Markup Language. It's the structure of webpages.",
+                    "CSS is used to style HTML. Try using 'color: red;' to change text color.",
+                    "JavaScript can make pages interactive. Try writing: alert('Hello!')",
+                ];
+                displayResponse(getRandom(tips));
+            } else if (command.includes("give me a quiz")) {
+                displayResponse("Here's a quiz: What does HTML stand for?\nA) HyperText Markup Language\nB) Home Tool Markup Language.\nSay your answer.");
+            } else if (command.includes("thank you") || command.includes("thanks")) {
+                displayResponse("You're welcome!");
+            } else if (command.includes("kese ho") || command.includes("how are you")) {
+                displayResponse("I am good, how can I help you?");
+            } else if (command.includes("to day hh")) {
+                displayResponse("I am ready to assist you!");
+            }
+             else if (command.includes("mute")) {
+                isMuted = true;
+                displayResponse("System muted. I will no longer speak.");
+            } else if (command.includes("unmute")) {
+                isMuted = false;
+                displayResponse("System unmuted. I will now speak.");
+            }
+            else {
+                displayResponse("Sorry, I didn't understand that command.");
+            }
+        }
+
+        if (recognition) {
+            recognition.onstart = () => setListening(true);
+            recognition.onend = () => setListening(false);
+            recognition.onerror = (e) => displayError("Error: " + e.error);
+            recognition.onresult = (e) => {
+                const transcript = e.results[0][0].transcript.trim();
+                console.log("Transcript:", transcript);
+                displayResponse(`You said: ${transcript}`);
+                processCommand(transcript);
+            };
+        }
+
+        function startListening() {
+            if (recognition) {
+                recognition.start();
+            } else {
+                displayError("Speech recognition notavailable.");
+            }
+        }
+
+        function handleInput() {
+            const text = userInput.value.trim();
+            if (text) {
+                displayResponse(`You typed: ${text}`);
+                processCommand(text);
+                userInput.value = "";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayResponse(`Keso ho ${myName}? How can I help you?`);
+            button.addEventListener("click", startListening);
+            submitButton.addEventListener("click", handleInput);
+            userInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    handleInput();
+                }
+            });
+            // Get the voices.
+            speechSynthesis.getVoices();
+            //  Optional:  Listen for the 'voiceschanged' event if voices aren't immediately available.
+            speechSynthesis.onvoiceschanged = () => {
+               speech.voice =  speechSynthesis.getVoices().find(v => v.name.includes('Female')) ||
+                    speechSynthesis.getVoices().find(v => v.name.includes('female')) ||
+                    speechSynthesis.getVoices().find(v => v.name.includes('Amy'));
+            };
+        });
+    </script>
+</body>
+
+</html>
